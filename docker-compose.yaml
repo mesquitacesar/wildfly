@@ -1,0 +1,39 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:10
+    ports:
+      - 5432:5432
+    environment:
+      - LC_ALL=C.UTF-8
+      - POSTGRES_DB=aluno_db
+      - POSTGRES_USER=aluno
+      - POSTGRES_PASSWORD=321
+      - POSTGRES_PORT=5432
+    volumes:
+      - persistent:/var/lib/postgresql
+    networks:
+      - java-net
+
+  wildfly:
+    build: .
+    ports:
+      - 80:8080
+      - 9990:9990
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=aluno_db
+      - DB_USER=aluno
+      - DB_PASS=321
+    depends_on:
+      - postgres
+    volumes:
+      - /var/lib/docker/volumes/naea-persistence:/bitnami
+    networks:
+      - java-net
+
+volumes:
+    persistent:
+
+networks:
+    java-net:
